@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * This class is a flyweight for prototyping a quest.
  * Created by Rothens on 2015.03.31..
  */
 public class QuestDef {
@@ -12,6 +13,7 @@ public class QuestDef {
     private final String ongoing;
     private final String onfinished;
     private final ArrayList<Integer> prerequisites;
+    private final ArrayList<Integer> touch;
     private final ArrayList<Integer> questGivers;
     private final HashMap<Integer, Integer> questRequest;
 
@@ -23,6 +25,19 @@ public class QuestDef {
         this.questGivers = questGivers;
         this.questRequest = questRequest;
         this.prerequisites = prerequisites;
+        touch = new ArrayList<Integer>();
+    }
+
+    public void addTouch(int i){
+        touch.add(i);
+    }
+
+    /**
+     * Returns the ids of the quests this quest is prerequisite of.
+     * @return an ArrayList containing the ids
+     */
+    public ArrayList<Integer> getTouch() {
+        return touch;
     }
 
     public int getId() {
