@@ -49,6 +49,14 @@ project(":core") {
     }
 }
 
+project(":qlib") {
+    apply plugin: "java"
+
+    dependencies {
+        compile 'com.googlecode.json-simple:json-simple:1.1'
+    }
+}
+
 tasks.eclipse.doLast {
     delete ".project"
 }

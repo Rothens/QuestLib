@@ -1,0 +1,33 @@
+[
+  {
+    "id": 1,
+    "description": "First quest of all!",
+    "ongoing": "You still didn't finished that?",
+    "onfinished": "Yeeey! You finished the quest!",
+    "questgivers": [1]
+  },
+  {
+    "id": 2,
+    "description": "Second Quest - a!",
+    "ongoing": "This is 'a' quest!",
+    "onfinished": "Yeeey! You finished 'a' quest!",
+    "prerequisites": [1],
+    "questgivers": [1]
+  },
+  {
+    "id": 3,
+    "description": "Second Quest - b!",
+    "ongoing": "This is 'b' quest!",
+    "onfinished": "Yeeey! You finished 'b' quest!",
+    "prerequisites": [1],
+    "questgivers": [1]
+  },
+  {
+    "id": 4,
+    "description": "The last quest for this time!",
+    "ongoing": "You really have to do that biatsch!",
+    "onfinished": "Yeeey! You finished 'a' quest!",
+    "prerequisites": [2,3],
+    "questgivers": [1]
+  }
+]
