@@ -5,8 +5,8 @@
     "ongoing": "You still didn't finished that?",
     "onfinished": "Yeeey! You finished the quest!",
     "required":[
-        {"id" = 5, "type" = 0, "count" = 1},
-		{"id" = 3, "type" = 4, "count" = 10}
+        {"id" : 5, "type" : 0, "count" : 1},
+		{"id" : 3, "type" : 4, "count" : 10}
     ],
     "questgivers": [1]
   },
