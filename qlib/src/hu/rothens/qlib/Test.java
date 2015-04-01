@@ -1,5 +1,6 @@
 package hu.rothens.qlib;
 
+import hu.rothens.graph.GraphDisplay;
 import hu.rothens.qlib.tools.JsonLoader;
 
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
@@ -9,7 +10,7 @@ import java.util.Arrays;
 /**
  * Created by Rothens on 2015.03.31..
  */
-public class Test {
+class Test {
 
     public static void main(String[] args) {
         QuestManager questManager = new QuestManager();
@@ -26,6 +27,9 @@ public class Test {
         System.out.println("-----------------doable with three quests-----------------");
         done.add(3);
         questManager.printDoable(done);
+
+        GraphDisplay gd = new GraphDisplay();
+        gd.addQuests(questManager.getDefs());
     }
 
 

@@ -7,8 +7,9 @@ import java.util.ArrayList;
  */
 public class QuestUser {
     private final int id;
-    private ArrayList<Integer> finishedQuests;
-    private ArrayList<Integer> inProgressQuests;
+    private final ArrayList<Integer> finishedQuests;
+    private final ArrayList<Integer> inProgressQuests;
+
 
     public QuestUser(int id) {
         this.id = id;

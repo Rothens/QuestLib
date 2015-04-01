@@ -62,3 +62,9 @@ build/
 
 ## OS Specific
 .DS_Store
+
+qlib/src/hu/rothens/graph/Connection.java
+qlib/src/hu/rothens/graph/Graph.java
+qlib/src/hu/rothens/graph/GraphDisplay.java
+qlib/src/hu/rothens/graph/Names.java
+qlib/src/hu/rothens/graph/Node.java

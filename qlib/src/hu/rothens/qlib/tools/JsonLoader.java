@@ -1,6 +1,5 @@
 package hu.rothens.qlib.tools;
 
-import hu.rothens.qlib.model.Quest;
 import hu.rothens.qlib.model.QuestDef;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -10,13 +9,12 @@ import org.json.simple.parser.JSONParser;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Created by Rothens on 2015.03.31..
  */
 public class JsonLoader implements QDBLoader {
-    String file;
+    private final String file;
     public JsonLoader(String file){
         this.file = file;
     }

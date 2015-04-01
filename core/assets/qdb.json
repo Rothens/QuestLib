@@ -24,10 +24,25 @@
   },
   {
     "id": 4,
+    "description": "You have to do this",
+    "ongoing": "You really have to do this",
+    "onfinished": "Awww, done!",
+    "prerequisites": [2,3],
+    "questgivers": [1]
+  },
+  {
+    "id": 5,
+    "description": "This is another easy quest!",
+    "ongoing": "Hey, this is easy! Don't mess around!",
+    "onfinished": "Easy quest finished!",
+    "questgivers": [1]
+  },
+  {
+    "id": 6,
     "description": "The last quest for this time!",
     "ongoing": "You really have to do that biatsch!",
     "onfinished": "Yeeey! You finished 'a' quest!",
-    "prerequisites": [2,3],
+    "prerequisites": [4,5],
     "questgivers": [1]
   }
 ]

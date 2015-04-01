@@ -5,18 +5,23 @@ import hu.rothens.qlib.model.QuestUser;
 import hu.rothens.qlib.tools.QDBLoader;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
  * Created by Rothens on 2015.03.31..
  */
 public class QuestManager {
-    private HashMap<Integer, QuestUser> questUsers;
-    private HashMap<Integer, QuestDef> questDefs;
+    private final HashMap<Integer, QuestUser> questUsers;
+    private final HashMap<Integer, QuestDef> questDefs;
 
     public QuestManager(){
         questUsers = new HashMap<Integer, QuestUser>();
         questDefs = new HashMap<Integer, QuestDef>();
+    }
+
+    public QuestUser getQuestUser(int id){
+        return questUsers.get(id);
     }
 
     public void loadDefs(QDBLoader loader){
@@ -32,7 +37,7 @@ public class QuestManager {
                 }
             }
         }
-        
+
         for(QuestDef qd: questDefs.values()){
             System.out.printf("Quest #%d touches: [ ", qd.getId());
             for(int i : qd.getTouch()){
@@ -41,6 +46,10 @@ public class QuestManager {
             System.out.printf("]\n");
         }
 
+    }
+
+    public Collection<QuestDef> getDefs(){
+        return questDefs.values();
     }
 
     public void printDoable(ArrayList<Integer> done){
