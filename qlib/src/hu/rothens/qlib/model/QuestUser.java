@@ -8,12 +8,12 @@ import java.util.ArrayList;
 public class QuestUser {
     private final int id;
     private final ArrayList<Integer> finishedQuests;
-    private final ArrayList<Integer> inProgressQuests;
+    private final ArrayList<Quest> inProgressQuests;
 
 
     public QuestUser(int id) {
         this.id = id;
         finishedQuests = new ArrayList<Integer>();
-        inProgressQuests = new ArrayList<Integer>();
+        inProgressQuests = new ArrayList<Quest>();
     }
 }

@@ -2,6 +2,7 @@ package hu.rothens.qlib.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * This class is a flyweight for prototyping a quest.
@@ -15,9 +16,9 @@ public class QuestDef {
     private final ArrayList<Integer> prerequisites;
     private final ArrayList<Integer> touch;
     private final ArrayList<Integer> questGivers;
-    private final HashMap<Integer, Integer> questRequest;
+    private final HashSet<QuestRequest> questRequest;
 
-    public QuestDef(int id, String description, String ongoing, String onfinished, ArrayList<Integer> questGivers, HashMap<Integer, Integer> questRequest, ArrayList<Integer> prerequisites) {
+    public QuestDef(int id, String description, String ongoing, String onfinished, ArrayList<Integer> questGivers, HashSet<QuestRequest> questRequest, ArrayList<Integer> prerequisites) {
         this.id = id;
         this.description = description;
         this.ongoing = ongoing;
@@ -64,7 +65,7 @@ public class QuestDef {
         return questGivers;
     }
 
-    public HashMap<Integer, Integer> getQuestRequest() {
+    public HashSet<QuestRequest> getQuestRequest() {
         return questRequest;
     }
 

@@ -26,4 +26,22 @@ public class QuestRequest {
     public int getCount() {
         return count;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        QuestRequest that = (QuestRequest) o;
+
+        return requestType == that.requestType && subjectId.equals(that.subjectId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = subjectId.hashCode();
+        result = 31 * result + requestType.hashCode();
+        return result;
+    }
 }
