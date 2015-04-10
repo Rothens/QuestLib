@@ -6,10 +6,10 @@ package hu.rothens.qlib.model;
  */
 public class QuestRequest {
     private final Integer subjectId;
-    private final SubjectType requestType;
+    private final RequestType requestType;
     private final int count;
 
-    public QuestRequest(Integer subjectId, SubjectType requestType, int count) {
+    public QuestRequest(Integer subjectId, RequestType requestType, int count) {
         this.subjectId = subjectId;
         this.requestType = requestType;
         this.count = count;
@@ -19,7 +19,7 @@ public class QuestRequest {
         return subjectId;
     }
 
-    public SubjectType getRequestType() {
+    public RequestType getRequestType() {
         return requestType;
     }
 
@@ -40,8 +40,6 @@ public class QuestRequest {
 
     @Override
     public int hashCode() {
-        int result = subjectId.hashCode();
-        result = 31 * result + requestType.hashCode();
-        return result;
+        return 31 * subjectId*count + requestType.ordinal();
     }
 }

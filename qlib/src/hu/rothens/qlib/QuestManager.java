@@ -3,7 +3,7 @@ package hu.rothens.qlib;
 import hu.rothens.qlib.model.QuestDef;
 import hu.rothens.qlib.model.QuestSubject;
 import hu.rothens.qlib.model.QuestUser;
-import hu.rothens.qlib.model.SubjectType;
+import hu.rothens.qlib.model.RequestType;
 import hu.rothens.qlib.tools.QDBLoader;
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class QuestManager {
         }
     }
 
-    public void notify(QuestSubject qs, SubjectType type, int cnt){
+    public void notify(int user, QuestSubject qs, RequestType type, int cnt){
 
     }
 

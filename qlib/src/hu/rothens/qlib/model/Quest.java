@@ -20,6 +20,21 @@ public class Quest {
         }
     }
 
+    public boolean notify(QuestSubject sub, RequestType st, int amt){
+        boolean ret = true;
+        for(QuestRequest qr : def.getQuestRequest()){
+            int c = cnt.get(qr.hashCode());
+            if(qr.getSubjectId() == sub.getSubjectId() && qr.getRequestType() == st){
+                c+= amt;
+                cnt.put(qr.hashCode(), c);
+            }
+            if(c < qr.getCount()) ret = false;
+
+        }
+
+        return ret;
+    }
+
     public QuestDef getDef() {
         return def;
     }
