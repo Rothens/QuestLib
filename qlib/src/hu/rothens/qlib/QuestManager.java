@@ -54,6 +54,10 @@ public class QuestManager {
         return questDefs.values();
     }
 
+    public QuestDef getDef(int id){
+        return questDefs.get(id);
+    }
+
     public void printDoable(ArrayList<Integer> done){
         ArrayList<Integer> doable = new ArrayList<Integer>();
 

@@ -70,6 +70,22 @@ public class QuestDef {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        QuestDef questDef = (QuestDef) o;
+
+        return id == questDef.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
     public String toString() {
         return String.format("QuestDef{id=%d, description='%s', ongoing='%s', onfinished='%s'}", id, description, ongoing, onfinished);
     }
