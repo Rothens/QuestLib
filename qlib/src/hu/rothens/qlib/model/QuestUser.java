@@ -4,9 +4,9 @@ import hu.rothens.qlib.QuestManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
+ * Represents a User, which has quests that it can do.
  * Created by Rothens on 2015.03.31..
  */
 public class QuestUser {
@@ -25,6 +25,15 @@ public class QuestUser {
         this.manager = manager;
     }
 
+
+    /**
+     * Notifies this User about an event which could affect active quests.
+     * If a given quest is complete, it'll look up the quests it touches, and if all prerequisites are met, it'll be
+     * added to the available list.
+     * @param qs The subject of the event.
+     * @param type The type of the event.
+     * @param cnt The amount of the event.
+     */
     public synchronized void notify(QuestSubject qs, RequestType type, int cnt){
         ArrayList<Quest> finished = new ArrayList<>();
         for(Quest q: inProgressQuests){

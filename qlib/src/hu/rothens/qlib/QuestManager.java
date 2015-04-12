@@ -9,6 +9,7 @@ import hu.rothens.qlib.tools.QDBLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by Rothens on 2015.03.31..
@@ -16,10 +17,12 @@ import java.util.HashMap;
 public class QuestManager {
     private final HashMap<Integer, QuestUser> questUsers;
     private final HashMap<Integer, QuestDef> questDefs;
+    private final HashSet<QuestDef> startingQuests;
 
     public QuestManager(){
         questUsers = new HashMap<Integer, QuestUser>();
         questDefs = new HashMap<Integer, QuestDef>();
+        startingQuests = new HashSet<>();
     }
 
     public QuestUser getQuestUser(int id){
@@ -38,6 +41,9 @@ public class QuestManager {
                     questDefs.get(i).addTouch(qd.getId());
                 }
             }
+            if(qd.getPrerequisites().isEmpty()){
+                startingQuests.add(qd);
+            }
         }
 
         for(QuestDef qd: questDefs.values()){
@@ -48,6 +54,15 @@ public class QuestManager {
             System.out.printf("]\n");
         }
 
+        System.out.println("---- Starting quests: ----");
+        for(QuestDef qd: startingQuests){
+            System.out.println(qd);
+        }
+
+    }
+
+    public HashSet<QuestDef> getStartingQuests() {
+        return startingQuests;
     }
 
     public Collection<QuestDef> getDefs(){
@@ -82,7 +97,10 @@ public class QuestManager {
     }
 
     public void notify(int user, QuestSubject qs, RequestType type, int cnt){
-
+        QuestUser qu = getQuestUser(user);
+        if(qu != null){
+            qu.notify(qs, type, cnt);
+        }
     }
 
 }
