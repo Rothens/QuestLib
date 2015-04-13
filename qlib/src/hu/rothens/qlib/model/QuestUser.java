@@ -3,6 +3,7 @@ package hu.rothens.qlib.model;
 import hu.rothens.qlib.QuestManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -11,20 +12,27 @@ import java.util.HashSet;
  */
 public class QuestUser {
     private final int id;
-    private final ArrayList<Integer> finishedQuests;
-    private final ArrayList<Quest> inProgressQuests;
+    private final HashSet<Integer> finishedQuests;
+    private final HashMap<Integer, Quest> inProgressQuests;
     private final HashSet<QuestDef> available;
     private final QuestManager manager;
 
 
     public QuestUser(int id, QuestManager manager) {
         this.id = id;
-        finishedQuests = new ArrayList<>();
-        inProgressQuests = new ArrayList<>();
+        finishedQuests = new HashSet<>();
+        inProgressQuests = new HashMap<>();
         available = new HashSet<>();
         this.manager = manager;
     }
 
+    public QuestUser(int id, HashSet<Integer> finishedQuests, HashMap<Integer, Quest> inProgressQuests, HashSet<QuestDef> available, QuestManager manager) {
+        this.id = id;
+        this.finishedQuests = finishedQuests;
+        this.inProgressQuests = inProgressQuests;
+        this.available = available;
+        this.manager = manager;
+    }
 
     /**
      * Notifies this User about an event which could affect active quests.
@@ -36,14 +44,16 @@ public class QuestUser {
      */
     public synchronized void notify(QuestSubject qs, RequestType type, int cnt){
         ArrayList<Quest> finished = new ArrayList<>();
-        for(Quest q: inProgressQuests){
+        for(Quest q: inProgressQuests.values()){
             if(q.notify(qs, type, cnt)){
                 finished.add(q);
                 finishedQuests.add(q.getDef().getId());
 
             }
         }
-        inProgressQuests.removeAll(finished);
+        for(Quest q : finished) {
+            inProgressQuests.remove(q.getDef().getId());
+        }
         for(Quest q : finished){
             for(int touch : q.getDef().getTouch()){
                 QuestDef qd = manager.getDef(touch);
@@ -55,4 +65,19 @@ public class QuestUser {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public HashSet<Integer> getFinishedQuests() {
+        return finishedQuests;
+    }
+
+    public HashMap<Integer, Quest> getInProgressQuests() {
+        return inProgressQuests;
+    }
+
+    public HashSet<QuestDef> getAvailable() {
+        return available;
+    }
 }

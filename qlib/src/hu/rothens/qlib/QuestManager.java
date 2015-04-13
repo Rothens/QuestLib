@@ -5,6 +5,7 @@ import hu.rothens.qlib.model.QuestSubject;
 import hu.rothens.qlib.model.QuestUser;
 import hu.rothens.qlib.model.RequestType;
 import hu.rothens.qlib.tools.QDBLoader;
+import hu.rothens.qlib.tools.UDBManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,10 +19,12 @@ public class QuestManager {
     private final HashMap<Integer, QuestUser> questUsers;
     private final HashMap<Integer, QuestDef> questDefs;
     private final HashSet<QuestDef> startingQuests;
+    private QDBLoader loader;
+    private UDBManager manager;
 
     public QuestManager(){
-        questUsers = new HashMap<Integer, QuestUser>();
-        questDefs = new HashMap<Integer, QuestDef>();
+        questUsers = new HashMap<>();
+        questDefs = new HashMap<>();
         startingQuests = new HashSet<>();
     }
 
@@ -57,6 +60,15 @@ public class QuestManager {
         System.out.println("---- Starting quests: ----");
         for(QuestDef qd: startingQuests){
             System.out.println(qd);
+        }
+
+    }
+
+    public void loadProgress(UDBManager manager){
+        this.manager = manager;
+        ArrayList<QuestUser> data = manager.getAllUserData();
+        for(QuestUser qu : data){
+            questUsers.put(qu.getId(), qu);
         }
 
     }

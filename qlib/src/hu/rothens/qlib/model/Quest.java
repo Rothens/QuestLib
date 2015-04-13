@@ -20,6 +20,15 @@ public class Quest {
         }
     }
 
+    public void setRequest(int requestHash, int amt){
+        Integer i = cnt.get(requestHash);
+        if(i != null){
+            cnt.put(requestHash, amt);
+        } else {
+            System.out.printf("hash=%d not found", requestHash);
+        }
+    }
+
     public boolean notify(QuestSubject sub, RequestType st, int amt){
         boolean ret = true;
         for(QuestRequest qr : def.getQuestRequest()){
@@ -35,7 +44,16 @@ public class Quest {
         return ret;
     }
 
+    @Override
+    public int hashCode() {
+        return def.getId();
+    }
+
     public QuestDef getDef() {
         return def;
+    }
+
+    public HashMap<Integer, Integer> getCnt() {
+        return cnt;
     }
 }
