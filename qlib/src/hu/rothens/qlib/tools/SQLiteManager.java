@@ -54,8 +54,6 @@ public final class SQLiteManager implements UDBManager {
             fin.execute();
             ipr.execute();
             avail.execute();
-            System.out.println("db created");
-
         } catch (Exception e){
             System.err.println(e.getMessage());
         }
@@ -196,9 +194,9 @@ public final class SQLiteManager implements UDBManager {
     public void clear() {
         try(
                 Connection conn = getConnection();
-                PreparedStatement ps1 = conn.prepareStatement("DROP TABLE AVAILABLE CASCADE;");
-                PreparedStatement ps2 = conn.prepareStatement("DROP TABLE FINISHED CASCADE;");
-                PreparedStatement ps3 = conn.prepareStatement("DROP TABLE PROGRESS CASCADE;")
+                PreparedStatement ps1 = conn.prepareStatement("DELETE FROM AVAILABLE;");
+                PreparedStatement ps2 = conn.prepareStatement("DELETE FROM FINISHED;");
+                PreparedStatement ps3 = conn.prepareStatement("DELETE FROM PROGRESS;")
 
         ) {
             ps1.execute();
@@ -207,5 +205,42 @@ public final class SQLiteManager implements UDBManager {
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+    @Override
+    public QuestUser newUser(int id) {
+        QuestUser qu = new QuestUser(id, questManager);
+        HashSet<QuestDef> startingQuests = questManager.getStartingQuests();
+        qu.addAvailable(startingQuests);
+        try(
+                Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO AVAILABLE (uid, qid) VALUES (?,?);")
+        ){
+            ps.setInt(1, id);
+            for(QuestDef q : startingQuests){
+                ps.setInt(2, q.getId());
+                ps.execute();
+            }
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return qu;
+    }
+
+    @Override
+    public void acceptQuest(QuestUser qu, Quest q) {
+        try(
+                Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement("DELETE FROM AVAILABLE WHERE qid=? AND uid=?;")
+        ){
+            ps.setInt(1, q.getDef().getId());
+            ps.setInt(2, qu.getId());
+            ps.execute();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        updateProgress(qu, q);
     }
 }

@@ -14,5 +14,7 @@ public interface UDBManager {
     public void finishQuest(QuestUser qu, Quest q);
     public void updateProgress(QuestUser qu, Quest q);
     public void setAvailable(QuestUser qu, int qid);
+    public void acceptQuest(QuestUser qu, Quest q);
+    public QuestUser newUser(int id);
     public void clear();
 }

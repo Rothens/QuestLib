@@ -29,6 +29,13 @@ public class Quest {
         }
     }
 
+    public boolean isRelated(QuestSubject sub, RequestType st){
+        for(QuestRequest qr: def.getQuestRequest()){
+            if(qr.getSubjectId() == sub.getSubjectId() && qr.getRequestType() == st) return true;
+        }
+        return false;
+    }
+
     public boolean notify(QuestSubject sub, RequestType st, int amt){
         boolean ret = true;
         for(QuestRequest qr : def.getQuestRequest()){

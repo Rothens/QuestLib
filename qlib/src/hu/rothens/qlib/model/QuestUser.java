@@ -3,6 +3,7 @@ package hu.rothens.qlib.model;
 import hu.rothens.qlib.QuestManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -45,28 +46,50 @@ public class QuestUser {
     public synchronized void notify(QuestSubject qs, RequestType type, int cnt){
         ArrayList<Quest> finished = new ArrayList<>();
         for(Quest q: inProgressQuests.values()){
-            if(q.notify(qs, type, cnt)){
-                finished.add(q);
-                finishedQuests.add(q.getDef().getId());
+            if(q.isRelated(qs, type)) {
+                if (q.notify(qs, type, cnt)) {
+                    finished.add(q);
+                    finishedQuests.add(q.getDef().getId());
+                    System.out.println("finished: " + q.def.getId());
 
+                }
+                manager.updateProgress(this, q);
             }
         }
-        for(Quest q : finished) {
-            inProgressQuests.remove(q.getDef().getId());
-        }
+
+
         for(Quest q : finished){
+            inProgressQuests.remove(q.getDef().getId());
+            manager.setFinished(this, q);
             for(int touch : q.getDef().getTouch()){
                 QuestDef qd = manager.getDef(touch);
                 if(qd != null && !available.contains(qd) && finishedQuests.containsAll(qd.getPrerequisites())){
                     available.add(qd);
+                    manager.setAvailable(this, qd.getId());
+                    System.out.println("new quest available: " + qd.getId());
                 }
             }
 
         }
     }
 
+    public Quest acceptQuest(QuestDef qd){
+        if(!available.contains(qd)){
+            System.out.println("Quest " + qd.getId() + " not available.");
+            return null;
+        }
+        available.remove(qd);
+        Quest ret = qd.createQuest();
+        inProgressQuests.put(qd.getId(), ret);
+        return ret;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void addAvailable(Collection<QuestDef> available){
+        this.available.addAll(available);
     }
 
     public HashSet<Integer> getFinishedQuests() {

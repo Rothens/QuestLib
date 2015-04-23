@@ -89,4 +89,8 @@ public class QuestDef {
     public String toString() {
         return String.format("QuestDef{id=%d, description='%s', ongoing='%s', onfinished='%s'}", id, description, ongoing, onfinished);
     }
+
+    public Quest createQuest(){
+        return new Quest(this);
+    }
 }
