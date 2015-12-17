@@ -7,3 +7,6 @@ before_script:
  - chmod +x gradlew
 
 script: ./gradlew assemble
+
+jdk:
+ - oraclejdk7
