@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quest Definitions",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "description", "ongoing", "onfinished", "required"],
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique identifier for the quest"
+      },
+      "description": {
+        "type": "string",
+        "description": "Quest description text"
+      },
+      "ongoing": {
+        "type": "string",
+        "description": "Text displayed while quest is in progress"
+      },
+      "onfinished": {
+        "type": "string",
+        "description": "Text displayed when quest is completed"
+      },
+      "questgivers": {
+        "type": "array",
+        "description": "List of NPC IDs that can give this quest",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "prerequisites": {
+        "type": "array",
+        "description": "List of quest IDs that must be completed before this quest is available",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "required": {
+        "type": "array",
+        "description": "List of requirements to complete this quest",
+        "items": {
+          "type": "object",
+          "required": ["id", "type", "count"],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "ID of the subject (monster, item, NPC, location)"
+            },
+            "type": {
+              "type": "integer",
+              "description": "Type of requirement (0=KILL, 1=GATHER, 2=USE, 3=VISIT, 4=TALK)",
+              "minimum": 0,
+              "maximum": 4
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of times the action must be performed",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

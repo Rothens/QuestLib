@@ -4,6 +4,7 @@ import hu.rothens.qlib.QuestManager;
 import hu.rothens.qlib.model.Quest;
 import hu.rothens.qlib.model.QuestDef;
 import hu.rothens.qlib.model.QuestUser;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.HashSet;
 /**
  * Created by Rothens on 2015.04.08..
  */
+@Slf4j
 public final class SQLiteManager implements UDBManager {
     private final String dbName;
     private final QuestManager questManager;
@@ -21,7 +23,7 @@ public final class SQLiteManager implements UDBManager {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
-            System.out.println("SQLite JDBC not found!");
+            log.error("SQLiteManager error={}", "SQLite JDBC not found!");
         }
         this.dbName = dbName;
         this.questManager = questManager;
@@ -55,7 +57,7 @@ public final class SQLiteManager implements UDBManager {
             ipr.execute();
             avail.execute();
         } catch (Exception e){
-            System.err.println(e.getMessage());
+            log.error("SQLiteManager.init error={}", e.getMessage());
         }
     }
 
@@ -101,7 +103,7 @@ public final class SQLiteManager implements UDBManager {
             return new QuestUser(id,finished,progress, available, questManager);
 
         } catch (Exception e){
-            System.err.println(e.getMessage());
+            log.error("SQLiteManager.getUserData error={}", e.getMessage());
         }
         return null;
     }
@@ -121,7 +123,7 @@ public final class SQLiteManager implements UDBManager {
                 ids.add(rs.getInt("uid"));
             }
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            log.error("SQLiteManager.getAllUserData error={}", e.getMessage());
         }
         ArrayList<QuestUser> users = new ArrayList<>();
         for(int i : ids){
@@ -145,7 +147,7 @@ public final class SQLiteManager implements UDBManager {
             ps2.setLong(3, System.currentTimeMillis());
             ps2.execute();
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            log.error("SQLiteManager.finishQuest error={}", e.getMessage());
         }
     }
 
@@ -171,7 +173,7 @@ public final class SQLiteManager implements UDBManager {
 
 
         } catch(Exception e){
-            System.out.println(e.getMessage());
+            log.error("SQLiteManager.updateProgress error={}", e.getMessage());
         }
 
     }
@@ -186,7 +188,7 @@ public final class SQLiteManager implements UDBManager {
             ps.setInt(2, qid);
             ps.execute();
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            log.error("SQLiteManager.setAvailable error={}", e.getMessage());
         }
     }
 
@@ -203,7 +205,7 @@ public final class SQLiteManager implements UDBManager {
             ps2.execute();
             ps3.execute();
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            log.error("SQLiteManager.clear error={}", e.getMessage());
         }
     }
 
@@ -222,7 +224,7 @@ public final class SQLiteManager implements UDBManager {
                 ps.execute();
             }
         } catch(Exception e){
-            System.out.println(e.getMessage());
+            log.error("SQLiteManager.newUser error={}", e.getMessage());
         }
 
         return qu;
@@ -238,7 +240,7 @@ public final class SQLiteManager implements UDBManager {
             ps.setInt(2, qu.getId());
             ps.execute();
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            log.error("SQLiteManager.acceptQuest error={}",e.getMessage());
         }
 
         updateProgress(qu, q);

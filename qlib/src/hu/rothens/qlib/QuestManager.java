@@ -3,6 +3,8 @@ package hu.rothens.qlib;
 import hu.rothens.qlib.model.*;
 import hu.rothens.qlib.tools.QDBLoader;
 import hu.rothens.qlib.tools.UDBManager;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,9 +14,11 @@ import java.util.HashSet;
 /**
  * Created by Rothens on 2015.03.31..
  */
+@Slf4j
 public class QuestManager {
     private final HashMap<Integer, QuestUser> questUsers;
     private final HashMap<Integer, QuestDef> questDefs;
+    @Getter
     private final HashSet<QuestDef> startingQuests;
     private QDBLoader loader;
     private UDBManager manager;
@@ -28,7 +32,7 @@ public class QuestManager {
     public QuestUser getQuestUser(int id){
         QuestUser qu = questUsers.get(id);
         if(qu == null){
-            System.out.println("createUser");
+            log.info("createUser");
             qu = new QuestUser(id, this);
             qu.addAvailable(getStartingQuests());
             questUsers.put(id, qu);
@@ -42,11 +46,11 @@ public class QuestManager {
     public void loadDefs(QDBLoader loader){
         loader.load(questDefs);
         this.loader = loader;
-        System.out.printf("-----------loaded %d quests---------\n", questDefs.size());
+        log.info("-----------loaded {} quests---------\n", questDefs.size());
         for(QuestDef qd : questDefs.values()){
             for(int i : qd.getPrerequisites()){
                 if(!questDefs.containsKey(i)){
-                    System.err.printf("Unresolved dependency (%d) for quest: %s\n",i,qd);
+                    log.error("Unresolved dependency ({}) for quest: {}",i,qd);
                 } else {
                     questDefs.get(i).addTouch(qd.getId());
                 }
@@ -71,14 +75,10 @@ public class QuestManager {
         ArrayList<QuestUser> data = manager.getAllUserData();
         for(QuestUser qu : data){
             questUsers.put(qu.getId(), qu);
-            System.out.println(qu.getId() + " -> " + qu.getAvailable().size() + " " + qu.getInProgressQuests().size());
+            log.info("{} -> {} {}", qu.getId(), qu.getAvailable().size(), qu.getInProgressQuests().size());
 
         }
 
-    }
-
-    public HashSet<QuestDef> getStartingQuests() {
-        return startingQuests;
     }
 
     public Collection<QuestDef> getDefs(){
@@ -108,21 +108,21 @@ public class QuestManager {
 
 
         for(Integer i : doable){
-            System.out.println(questDefs.get(i));
+            log.info("{}", questDefs.get(i));
         }
     }
 
     public void notify(int user, QuestSubject qs, RequestType type, int cnt){
         QuestUser qu = getQuestUser(user);
         if(qu != null){
-            System.out.println("notifying user: " + user);
+            log.info("notifying user: {}", user);
             qu.notify(qs, type, cnt);
         }
     }
 
     public void updateProgress(QuestUser qu, Quest q){
         if(manager != null){
-            System.out.println("updateProgress: " + qu.getId() + " quest: " + q.getDef().getId());
+            log.info("updateProgress: {} quest: {}", qu.getId(), q.getDef().getId());
             manager.updateProgress(qu, q);
         }
     }
@@ -147,7 +147,7 @@ public class QuestManager {
             //TODO: Dispatch events here
             if(manager != null){
                 manager.acceptQuest(qu, q);
-                System.out.println("accepted quest!");
+                log.info("accepted quest!");
             }
         }
 
