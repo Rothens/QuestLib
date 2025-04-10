@@ -1,31 +1,44 @@
 apply plugin: "java"
+apply plugin: "application"
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-project.ext.mainClassName = "hu.rothens.example.desktop.DesktopLauncher"
-project.ext.assetsDir = new File("../core/assets");
+mainClassName = "hu.rothens.example.desktop.DesktopLauncher"
+def assetsDir = new File("../core/assets")
 
-task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
+// Configure the run task created by the application plugin
+application {
+    mainClass = mainClassName
+}
+
+// Configure all JavaExec tasks
+tasks.withType(JavaExec) {
+    workingDir = assetsDir
     standardInput = System.in
-    workingDir = project.assetsDir
     ignoreExitValue = true
 }
 
-task dist(type: Jar) {
-    from files(sourceSets.main.output.classesDir)
-    from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
- 
-    manifest {
-        attributes 'Main-Class': project.mainClassName
-    }
+// Instead of creating a new 'run' task, configure the existing one
+run {
+    classpath = sourceSets.main.runtimeClasspath
 }
 
-dist.dependsOn classes
+task dist(type: Jar) {
+    dependsOn classes
+
+    from sourceSets.main.output.classesDirs
+    from sourceSets.main.output.resourcesDir
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from assetsDir
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
 
 eclipse {
     project {
@@ -35,12 +48,12 @@ eclipse {
 }
 
 task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
-  doLast {
-    def classpath = new XmlParser().parse(file(".classpath"))
-    new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);
-    def writer = new FileWriter(file(".classpath"))
-    def printer = new XmlNodePrinter(new PrintWriter(writer))
-    printer.setPreserveWhitespace(true)
-    printer.print(classpath)
-  }
+    doLast {
+        def classpath = new XmlParser().parse(file(".classpath"))
+        new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ])
+        def writer = new FileWriter(file(".classpath"))
+        def printer = new XmlNodePrinter(new PrintWriter(writer))
+        printer.setPreserveWhitespace(true)
+        printer.print(classpath)
+    }
 }

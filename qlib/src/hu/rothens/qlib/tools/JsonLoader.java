@@ -1,87 +1,117 @@
 package hu.rothens.qlib.tools;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.rothens.qlib.model.QuestDef;
 import hu.rothens.qlib.model.QuestRequest;
 import hu.rothens.qlib.model.RequestType;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
-import java.io.FileReader;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 /**
- * Created by Rothens on 2015.03.31..
+ * JSON loader for quest definitions.
  */
+@Slf4j
 public class JsonLoader implements QDBLoader {
-    private final String file;
-    public JsonLoader(String file){
-        this.file = file;
+
+    private final String filePath;
+    private final ObjectMapper objectMapper;
+
+    public JsonLoader(String filePath) {
+        this.filePath = filePath;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
     public void load(HashMap<Integer, QuestDef> quests) {
-        JSONParser jsonParser = new JSONParser();
         try {
-            JSONArray array = (JSONArray) jsonParser.parse(new FileReader(file));
-            for (Object anArray : array) {
-                JSONObject o = (JSONObject) anArray;
-                Integer id = ((Long) o.get("id")).intValue();
-                String desc = (String) o.get("description");
-                String ong = (String) o.get("ongoing");
-                String onf = (String) o.get("onfinished");
+            List<QuestDefinition> questDefinitions = objectMapper.readValue(
+                    new File(filePath),
+                    new TypeReference<List<QuestDefinition>>() {}
+            );
 
-                ArrayList<Integer> qgivers = new ArrayList<Integer>();
-                ArrayList<Integer> qpreq = new ArrayList<Integer>();
-                HashSet<QuestRequest> reqs = new HashSet<>();
-                Object ob = o.get("questgivers");
-                if (ob != null && ob instanceof JSONArray) {
-                    for (Long aLong : (Iterable<Long>) ob) {
-                        qgivers.add(aLong.intValue());
-                    }
-                }
+            log.info("Loaded {} quest definitions from file", questDefinitions.size());
 
-                ob = o.get("prerequisites");
-                if (ob != null && ob instanceof JSONArray) {
-                    for (Long aLong : (Iterable<Long>) ob) {
-                        qpreq.add(aLong.intValue());
-                    }
-                }
-
-                ob = o.get("required");
-                if(ob != null && ob instanceof JSONArray){
-                    JSONArray ja = (JSONArray) ob;
-                    if(ja.isEmpty()) {
-                        System.out.println("No requirements for quest: " + id);
+            for (QuestDefinition definition : questDefinitions) {
+                try {
+                    HashSet<QuestRequest> requirements = new HashSet<>();
+                    if (definition.required != null && !definition.required.isEmpty()) {
+                        for (RequirementDTO req : definition.required) {
+                            requirements.add(new QuestRequest(
+                                    req.id,
+                                    RequestType.values()[req.type],
+                                    req.count
+                            ));
+                        }
+                    } else {
+                        log.warn("No requirements for quest: {}", definition.id);
                         continue;
                     }
-                    for(JSONObject rq : (Iterable<JSONObject>) ob){
-                        int i =((Long) rq.get("id")).intValue();
-                        RequestType rt = RequestType.values()[((Long) rq.get("type")).intValue()];
-                        int c = ((Long) rq.get("count")).intValue();
-                        reqs.add(new QuestRequest(i, rt, c));
+
+                    QuestDef questDef = new QuestDef(
+                            definition.id,
+                            definition.description,
+                            definition.ongoing,
+                            definition.onfinished,
+                            definition.questgivers != null ? definition.questgivers : new ArrayList<>(),
+                            requirements,
+                            definition.prerequisites != null ? definition.prerequisites : new ArrayList<>()
+                    );
+
+                    if (quests.containsKey(questDef.getId())) {
+                        log.error("Quest ID collision! Quest {} collides with {}",
+                                questDef, quests.get(questDef.getId()));
+                    } else {
+                        quests.put(questDef.getId(), questDef);
                     }
-                } else {
-                    System.out.println("No requirements for quest: " + id);
-                    continue;
+                } catch (Exception e) {
+                    log.error("Error processing quest {}: {}", definition.id, e.getMessage());
                 }
-
-
-                QuestDef qd = new QuestDef(id, desc, ong, onf, qgivers, reqs, qpreq);
-                if(quests.containsKey(qd.getId())){
-                    System.err.println("QUEST ID COLLISION!");
-                    System.err.println(qd.toString() + " collides with " + quests.get(qd.getId()));
-                } else {
-                    quests.put(id, qd);
-                }
-
             }
-
-        } catch (Exception e){
-            System.out.println(e);
+        } catch (IOException e) {
+            log.error("Failed to load quest definitions from {}: {}", filePath, e.getMessage());
         }
+    }
+
+    private static class QuestDefinition {
+        @JsonProperty("id")
+        private int id;
+
+        @JsonProperty("description")
+        private String description;
+
+        @JsonProperty("ongoing")
+        private String ongoing;
+
+        @JsonProperty("onfinished")
+        private String onfinished;
+
+        @JsonProperty("questgivers")
+        private ArrayList<Integer> questgivers;
+
+        @JsonProperty("prerequisites")
+        private ArrayList<Integer> prerequisites;
+
+        @JsonProperty("required")
+        private List<RequirementDTO> required;
+    }
+
+    private static class RequirementDTO {
+        @JsonProperty("id")
+        private int id;
+
+        @JsonProperty("type")
+        private int type;
+
+        @JsonProperty("count")
+        private int count;
     }
 }

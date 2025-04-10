@@ -1,11 +1,18 @@
 package hu.rothens.qlib.model;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 
 /**
  * This class holds a specific quest object.
  * Created by Rothens on 2015.03.31..
  */
+@Getter
+@EqualsAndHashCode(of = {"def"})
+@Slf4j
 public class Quest {
     final QuestDef def;
     private HashMap<Integer, Integer> cnt;
@@ -25,7 +32,7 @@ public class Quest {
         if(i != null){
             cnt.put(requestHash, amt);
         } else {
-            System.out.printf("hash=%d not found", requestHash);
+            log.error("hash={} not found", requestHash);
         }
     }
 
@@ -51,16 +58,5 @@ public class Quest {
         return ret;
     }
 
-    @Override
-    public int hashCode() {
-        return def.getId();
-    }
 
-    public QuestDef getDef() {
-        return def;
-    }
-
-    public HashMap<Integer, Integer> getCnt() {
-        return cnt;
-    }
 }

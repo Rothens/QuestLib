@@ -1,6 +1,8 @@
 package hu.rothens.qlib.model;
 
 import hu.rothens.qlib.QuestManager;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,10 +13,15 @@ import java.util.HashSet;
  * Represents a User, which has quests that it can do.
  * Created by Rothens on 2015.03.31..
  */
+@RequiredArgsConstructor
 public class QuestUser {
+    @Getter
     private final int id;
+    @Getter
     private final HashSet<Integer> finishedQuests;
+    @Getter
     private final HashMap<Integer, Quest> inProgressQuests;
+    @Getter
     private final HashSet<QuestDef> available;
     private final QuestManager manager;
 
@@ -24,14 +31,6 @@ public class QuestUser {
         finishedQuests = new HashSet<>();
         inProgressQuests = new HashMap<>();
         available = new HashSet<>();
-        this.manager = manager;
-    }
-
-    public QuestUser(int id, HashSet<Integer> finishedQuests, HashMap<Integer, Quest> inProgressQuests, HashSet<QuestDef> available, QuestManager manager) {
-        this.id = id;
-        this.finishedQuests = finishedQuests;
-        this.inProgressQuests = inProgressQuests;
-        this.available = available;
         this.manager = manager;
     }
 
@@ -84,23 +83,8 @@ public class QuestUser {
         return ret;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public void addAvailable(Collection<QuestDef> available){
         this.available.addAll(available);
     }
 
-    public HashSet<Integer> getFinishedQuests() {
-        return finishedQuests;
-    }
-
-    public HashMap<Integer, Quest> getInProgressQuests() {
-        return inProgressQuests;
-    }
-
-    public HashSet<QuestDef> getAvailable() {
-        return available;
-    }
 }
